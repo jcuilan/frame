@@ -36,7 +36,7 @@ public class LoginController{
 		if(subject.isAuthenticated()||subject.isRemembered()){
 			return "redirect:"+ConfigUtils.config("adminPath")+"/admin.htm";
 		}else{		
-			return "login/login";
+			return "login/login1";
 		}
 		
 	}
