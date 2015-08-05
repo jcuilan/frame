@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.dao.login.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.spring.model.login.Permission">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="sort_no" jdbcType="INTEGER" property="sortNo" />
+    <result column="operating" jdbcType="VARCHAR" property="operating" />
+    <result column="enable" jdbcType="INTEGER" property="enable" />
+    <result column="create_time" jdbcType="INTEGER" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="modify_time" jdbcType="INTEGER" property="modifyTime" />
+    <result column="modify_by" jdbcType="INTEGER" property="modifyBy" />
+    <result column="rel" jdbcType="VARCHAR" property="rel" />
+    <result column="flag" jdbcType="VARCHAR" property="flag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, type, level, memo, name, url, parent_id, sort_no, operating, enable, create_time, 
+    create_by, modify_time, modify_by, rel, flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from zj_resources
+    where id = #{id,jdbcType=INTEGER} 
+    group by sort_no
+  </select>
+  <select id="findPermissions" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from zj_resources
+    where operating =#{rootId}
+    order by sort_no
+  </select>
+  <select id="findPermissionsByuserId" resultMap="BaseResultMap">
+    select 
+    	r.*
+    from zj_resources r INNER JOIN zj_roles_resources rr on r.id = rr.rsid
+     INNER JOIN zj_manager_roles ur on rr.rid = ur.rid
+     INNER JOIN zj_manager u on ur.uid = u.id
+    where u.id = #{userId,jdbcType=INTEGER} and r.operating =#{rootId}
+    group by sort_no
+  </select>
+  <select id="findPermissionsByUserLevel" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select 
+    	r.*
+    from zj_resources r INNER JOIN zj_roles_resources rr on r.id = rr.rsid
+     INNER JOIN zj_manager_roles ur on rr.rid = ur.rid
+     INNER JOIN zj_manager u on ur.uid = u.id
+    where u.id = #{userId,jdbcType=INTEGER} and r.level = #{level,jdbcType=INTEGER} and r.operating =#{rootId}
+    group by sort_no 
+  </select>
+  <select id="findPermissionsByLevel"  resultMap="BaseResultMap">
+    select 
+    	r.*
+    from zj_resources r
+    where r.level = #{level,jdbcType=INTEGER} and r.operating =#{rootId}
+    group by sort_no
+  </select>
+  <select id="findPermissionsByParentId" resultMap="BaseResultMap">
+    select 
+    	<include refid="Base_Column_List" />
+    from zj_resources r
+    where r.parent_id = #{parentId,jdbcType=INTEGER} and r.operating =#{rootId}
+    group by sort_no
+  </select>
+  
+</mapper>
